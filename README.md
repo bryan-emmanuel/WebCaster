@@ -14,3 +14,14 @@ Note: the videos may need to be mp4 encoded
 In the app settings, provide the URL for the directory containing the videos and the
  webcaster.py file, excluding protocol, such as 192.168.0.1. Also provide the
  whitelist app id.
+
+Movie Covers:
+
+Covers are supported, and should be jpg's, measuring 200x300 pixels.
+
+For an individual video, use the same name but with a jpg extension:
+/Movie.mp4
+/Movie.jpg
+
+For a directory of videos, use cover.jpg:
+/Season 1/cover.jpg
