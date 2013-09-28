@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WebCaster</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_chromecast">Chromecast</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="loading">Loading</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="select_cast_device">Select a cast device</string>
+    <string name="preference_host">host</string>
+    <string name="setting_host">Media Host</string>
+    <string name="preference_app_id">app_id</string>
+    <string name="setting_app_id">App Id</string>
+    <string name="button_submit">Submit</string>
+
+</resources>

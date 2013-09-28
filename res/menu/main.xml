@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_mediaroute"
+        android:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
+        android:actionViewClass="android.support.v7.app.MediaRouteButton"
+        android:showAsAction="always"
+        android:title="@string/action_chromecast"/>
+
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_refresh"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+
+</menu>
