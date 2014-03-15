@@ -9,7 +9,7 @@ Update your whitelist app id in the www/receiver.html file. This is the same fil
 
 Copy the www/webcaster.py file to your webserver in the same directory as the videos.
 
-Note: the videos may need to be mp4 encoded
+Note: the videos need to be in a format supported by Chromecast https://developers.google.com/cast/supported_media_types
 
 In the app settings, provide the URL for the directory containing the videos and the
  webcaster.py file, excluding protocol, such as 192.168.0.1. Also provide the
@@ -25,3 +25,7 @@ For an individual video, use the same name but with a jpg extension:
 
 For a directory of videos, use cover.jpg:
 /Season 1/cover.jpg
+
+Bitcoin address: 14cHZwUCuXbYtciL8j22QEamHKxtt5uZnV
+
+
