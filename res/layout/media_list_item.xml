@@ -28,16 +28,16 @@
         android:layout_height="@dimen/cover_height"
         android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"
-        android:scaleType="center"
-        android:padding="4dp" />
+        android:padding="4dp"
+        android:scaleType="center" />
 
     <ImageView
         android:id="@+id/more"
         android:layout_width="48dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
         android:scaleType="center"
         android:src="@drawable/ic_action_overflow" />
@@ -46,11 +46,12 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@id/cover"
-        android:layout_toLeftOf="@id/more"
+        android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
+        android:layout_toLeftOf="@id/more"
+        android:layout_toRightOf="@id/cover"
+        android:gravity="center"
         android:paddingLeft="6dip"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 

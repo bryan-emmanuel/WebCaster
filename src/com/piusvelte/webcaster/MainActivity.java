@@ -78,23 +78,23 @@ public class MainActivity extends FragmentActivity implements
 	private static final double VOLUME_INCREMENT = 0.05;
 	private static final int FRAGMENT_MEDIA_ROOT = 0;
 
-	private String mediaHost = null;
-	private String appId = null;
-	private List<Medium> media = new ArrayList<Medium>();
-	private List<Integer> dirIdx = new ArrayList<Integer>();
-	private DirPagerAdapter dirPagerAdapter;
-	private ViewPager viewPager;
-	private CastContext castContext;
-	private MediaRouter mediaRouter;
-	private MediaRouteSelector mediaRouteSelector;
-	private MediaRouteButton mediaRouteButton;
-	private MediaRouter.Callback mediaRouterCallback;
-	private CastDevice castDevice;
-	private ApplicationSession applicationSession;
-	private MediaProtocolMessageStream mediaProtocolMessageStream;
-	private Button btnPlay;
-	private MediaRouteStateChangeListener mediaRouteStateChangeListener;
-	private SeekBar seekBar;
+	private String mMediaHost = null;
+	private String mAppId = null;
+	private List<Medium> mMedia = new ArrayList<Medium>();
+	private List<Integer> mDirIdx = new ArrayList<Integer>();
+	private DirPagerAdapter mDirPagerAdapter;
+	private ViewPager mViewPager;
+	private CastContext mCastContext;
+	private MediaRouter mMediaRouter;
+	private MediaRouteSelector mMediaRouteSelector;
+	private MediaRouteButton mMediaRouteButton;
+	private MediaRouter.Callback mMediaRouterCallback;
+	private CastDevice mCastDevice;
+	private ApplicationSession mApplicationSession;
+	private MediaProtocolMessageStream mMediaProtocolMessageStream;
+	private Button mBtnPlay;
+	private MediaRouteStateChangeListener mMediaRouteStateChangeListener;
+	private SeekBar mSeekBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,43 +103,43 @@ public class MainActivity extends FragmentActivity implements
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
-		dirPagerAdapter = new DirPagerAdapter(getSupportFragmentManager());
+		mDirPagerAdapter = new DirPagerAdapter(getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
-		viewPager = (ViewPager) findViewById(R.id.pager);
-		viewPager.setAdapter(dirPagerAdapter);
+		mViewPager = (ViewPager) findViewById(R.id.pager);
+		mViewPager.setAdapter(mDirPagerAdapter);
 
-		castContext = new CastContext(getApplicationContext());
+		mCastContext = new CastContext(getApplicationContext());
 
 		SharedPreferences sp = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		mediaHost = sp.getString(getString(R.string.preference_host), null);
-		appId = sp.getString(getString(R.string.preference_app_id), null);
+		mMediaHost = sp.getString(getString(R.string.preference_host), null);
+		mAppId = sp.getString(getString(R.string.preference_app_id), null);
 
-		if (appId != null) {
+		if (mAppId != null) {
 			setupCasting();
 		}
 
-		seekBar = (SeekBar) findViewById(R.id.seek);
-		seekBar.setOnSeekBarChangeListener(this);
+		mSeekBar = (SeekBar) findViewById(R.id.seek);
+		mSeekBar.setOnSeekBarChangeListener(this);
 
-		btnPlay = (Button) findViewById(R.id.btn_play);
-		btnPlay.setOnClickListener(this);
+		mBtnPlay = (Button) findViewById(R.id.btn_play);
+		mBtnPlay.setOnClickListener(this);
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-		if (mediaHost != null) {
+		if (mMediaHost != null) {
 			getSupportLoaderManager().initLoader(0, null, this);
 		}
 	}
 
 	private void setupCasting() {
-		MediaRouteHelper.registerMinimalMediaRouteProvider(castContext, this);
-		mediaRouter = MediaRouter.getInstance(getApplicationContext());
-		mediaRouteSelector = MediaRouteHelper.buildMediaRouteSelector(
-				MediaRouteHelper.CATEGORY_CAST, appId, null);
+		MediaRouteHelper.registerMinimalMediaRouteProvider(mCastContext, this);
+		mMediaRouter = MediaRouter.getInstance(getApplicationContext());
+		mMediaRouteSelector = MediaRouteHelper.buildMediaRouteSelector(
+				MediaRouteHelper.CATEGORY_CAST, mAppId, null);
 
-		mediaRouterCallback = new MediaRouter.Callback() {
+		mMediaRouterCallback = new MediaRouter.Callback() {
 			@Override
 			public void onRouteSelected(MediaRouter router, RouteInfo route) {
 				MediaRouteHelper.requestCastDeviceForRoute(route);
@@ -148,9 +148,9 @@ public class MainActivity extends FragmentActivity implements
 			@Override
 			public void onRouteUnselected(MediaRouter router, RouteInfo route) {
 				try {
-					if (applicationSession != null) {
-						applicationSession.setStopApplicationWhenEnding(true);
-						applicationSession.endSession();
+					if (mApplicationSession != null) {
+						mApplicationSession.setStopApplicationWhenEnding(true);
+						mApplicationSession.endSession();
 					} else {
 						Log.e(TAG, "onRouteUnselected: mSession is null");
 					}
@@ -161,18 +161,19 @@ public class MainActivity extends FragmentActivity implements
 					Log.e(TAG, "onRouteUnselected:");
 					e.printStackTrace();
 				}
-				mediaProtocolMessageStream = null;
-				castDevice = null;
-				mediaRouteStateChangeListener = null;
+
+				mMediaProtocolMessageStream = null;
+				mCastDevice = null;
+				mMediaRouteStateChangeListener = null;
 			}
 		};
 	}
 
 	private void clearCasting() {
 		try {
-			if (applicationSession != null) {
-				applicationSession.setStopApplicationWhenEnding(true);
-				applicationSession.endSession();
+			if (mApplicationSession != null) {
+				mApplicationSession.setStopApplicationWhenEnding(true);
+				mApplicationSession.endSession();
 			} else {
 				Log.e(TAG, "onRouteUnselected: mSession is null");
 			}
@@ -183,9 +184,10 @@ public class MainActivity extends FragmentActivity implements
 			Log.e(TAG, "onRouteUnselected:");
 			e.printStackTrace();
 		}
-		mediaProtocolMessageStream = null;
-		castDevice = null;
-		mediaRouteStateChangeListener = null;
+
+		mMediaProtocolMessageStream = null;
+		mCastDevice = null;
+		mMediaRouteStateChangeListener = null;
 	}
 
 	@Override
@@ -195,11 +197,11 @@ public class MainActivity extends FragmentActivity implements
 
 		MenuItem mediaRouteItem = menu.findItem(R.id.action_mediaroute);
 
-		if (mediaRouteSelector != null) {
-			mediaRouteButton = (MediaRouteButton) mediaRouteItem
+		if (mMediaRouteSelector != null) {
+			mMediaRouteButton = (MediaRouteButton) mediaRouteItem
 					.getActionView();
-			mediaRouteButton.setRouteSelector(mediaRouteSelector);
-			mediaRouteButton.setDialogFactory(new MediaRouteDialogFactory());
+			mMediaRouteButton.setRouteSelector(mMediaRouteSelector);
+			mMediaRouteButton.setDialogFactory(new MediaRouteDialogFactory());
 			mediaRouteItem.setVisible(true);
 			mediaRouteItem.setEnabled(true);
 		} else {
@@ -214,8 +216,8 @@ public class MainActivity extends FragmentActivity implements
 	protected void onStart() {
 		super.onStart();
 
-		if (mediaRouter != null) {
-			mediaRouter.addCallback(mediaRouteSelector, mediaRouterCallback,
+		if (mMediaRouter != null) {
+			mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
 					MediaRouter.CALLBACK_FLAG_REQUEST_DISCOVERY);
 		}
 	}
@@ -224,16 +226,16 @@ public class MainActivity extends FragmentActivity implements
 	protected void onResume() {
 		super.onResume();
 
-		if ((appId == null) || (mediaHost == null)) {
+		if ((mAppId == null) || (mMediaHost == null)) {
 			startActivityForResult(
 					new Intent(this, SettingsActivity.class).putExtra(
-							SettingsActivity.EXTRA_APP_ID, appId).putExtra(
-							SettingsActivity.EXTRA_HOST, mediaHost), 0);
+							SettingsActivity.EXTRA_APP_ID, mAppId).putExtra(
+							SettingsActivity.EXTRA_HOST, mMediaHost), 0);
 		}
 
-		if (applicationSession != null) {
+		if (mApplicationSession != null) {
 			try {
-				applicationSession.resumeSession();
+				mApplicationSession.resumeSession();
 			} catch (IOException e) {
 				Log.e(TAG, "No session to resume", e);
 			} catch (IllegalStateException e) {
@@ -253,11 +255,11 @@ public class MainActivity extends FragmentActivity implements
 			String resultAppId = data
 					.getStringExtra(SettingsActivity.EXTRA_APP_ID);
 
-			if (((resultAppId != null) && (!resultAppId.equals(appId)) || (appId != null))) {
+			if (((resultAppId != null) && (!resultAppId.equals(mAppId)) || (mAppId != null))) {
 				clearCasting();
-				appId = resultAppId;
+				mAppId = resultAppId;
 
-				if (appId != null) {
+				if (mAppId != null) {
 					setupCasting();
 				}
 
@@ -268,17 +270,17 @@ public class MainActivity extends FragmentActivity implements
 			String resultHost = data
 					.getStringExtra(SettingsActivity.EXTRA_HOST);
 
-			if (((resultHost != null) && (!resultHost.equals(mediaHost)) || (mediaHost != null))) {
-				mediaHost = resultHost;
-				media = new ArrayList<Medium>();
-				dirIdx.clear();
-				dirIdx.add(0);
-				dirPagerAdapter.notifyDataSetChanged();
+			if (((resultHost != null) && (!resultHost.equals(mMediaHost)) || (mMediaHost != null))) {
+				mMediaHost = resultHost;
+				mMedia = new ArrayList<Medium>();
+				mDirIdx.clear();
+				mDirIdx.add(0);
+				mDirPagerAdapter.notifyDataSetChanged();
 				MediaLoader loader = (MediaLoader) getSupportLoaderManager()
 						.initLoader(0, null, this);
 
 				if (loader != null) {
-					loader.loadHost(mediaHost);
+					loader.loadHost(mMediaHost);
 				}
 			}
 		}
@@ -288,8 +290,8 @@ public class MainActivity extends FragmentActivity implements
 	protected void onPause() {
 		super.onPause();
 		PreferenceManager.getDefaultSharedPreferences(this).edit()
-				.putString(getString(R.string.preference_app_id), appId)
-				.putString(getString(R.string.preference_host), mediaHost)
+				.putString(getString(R.string.preference_app_id), mAppId)
+				.putString(getString(R.string.preference_host), mMediaHost)
 				.commit();
 	}
 
@@ -298,8 +300,8 @@ public class MainActivity extends FragmentActivity implements
 	 */
 	@Override
 	protected void onStop() {
-		if (mediaRouter != null) {
-			mediaRouter.removeCallback(mediaRouterCallback);
+		if (mMediaRouter != null) {
+			mMediaRouter.removeCallback(mMediaRouterCallback);
 		}
 
 		super.onStop();
@@ -307,17 +309,17 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	protected void onDestroy() {
-		if (applicationSession != null) {
+		if (mApplicationSession != null) {
 			try {
-				if (!applicationSession.hasStopped()) {
-					applicationSession.endSession();
+				if (!mApplicationSession.hasStopped()) {
+					mApplicationSession.endSession();
 				}
 			} catch (IOException e) {
 				Log.e(TAG, "Failed to end session.");
 			}
 		}
 
-		applicationSession = null;
+		mApplicationSession = null;
 		super.onDestroy();
 	}
 
@@ -338,7 +340,7 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public int getCount() {
-			return dirIdx.size();
+			return mDirIdx.size();
 		}
 
 		@Override
@@ -346,11 +348,14 @@ public class MainActivity extends FragmentActivity implements
 			Locale l = Locale.getDefault();
 
 			if (position == FRAGMENT_MEDIA_ROOT) {
-				return mediaHost.toUpperCase(l);
+				return mMediaHost.toUpperCase(l);
 			} else {
 				Medium m = getMediumAt(position);
 				if (m != null) {
-					return m.getFile().substring(m.getFile().lastIndexOf(File.separator) + 1).toUpperCase(l);
+					return m.getFile()
+							.substring(
+									m.getFile().lastIndexOf(File.separator) + 1)
+							.toUpperCase(l);
 				} else {
 					return "";
 				}
@@ -359,48 +364,41 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	private void openSession() {
-		applicationSession = new ApplicationSession(castContext, castDevice);
+		mApplicationSession = new ApplicationSession(mCastContext, mCastDevice);
 
-		// TODO: The below lines allow you to specify either that your
-		// application uses the default
-		// implementations of the Notification and Lock Screens, or that you
-		// will be using your own.
 		int flags = 0;
+		flags |= ApplicationSession.FLAG_DISABLE_NOTIFICATION;
+		flags |= ApplicationSession.FLAG_DISABLE_LOCK_SCREEN_REMOTE_CONTROL;
+		mApplicationSession.setApplicationOptions(flags);
 
-		// Comment out the below line if you are not writing your own
-		// Notification Screen.
-		// flags |= ApplicationSession.FLAG_DISABLE_NOTIFICATION;
-
-		// Comment out the below line if you are not writing your own Lock
-		// Screen.
-		// flags |= ApplicationSession.FLAG_DISABLE_LOCK_SCREEN_REMOTE_CONTROL;
-		applicationSession.setApplicationOptions(flags);
-
-		applicationSession.setListener(new ApplicationSession.Listener() {
+		mApplicationSession.setListener(new ApplicationSession.Listener() {
 
 			@Override
 			public void onSessionStarted(ApplicationMetadata appMetadata) {
-				ApplicationChannel channel = applicationSession.getChannel();
+				ApplicationChannel channel = mApplicationSession.getChannel();
 
 				if (channel == null) {
 					Log.e(TAG, "channel = null");
 					return;
 				}
 
-				if (mediaProtocolMessageStream != null) {
-					mediaProtocolMessageStream = null;
+				if (mMediaProtocolMessageStream != null) {
+					mMediaProtocolMessageStream = null;
 				}
 
-				mediaProtocolMessageStream = new MediaProtocolMessageStream();
-				channel.attachMessageStream(mediaProtocolMessageStream);
+				mMediaProtocolMessageStream = new MediaProtocolMessageStream();
+				channel.attachMessageStream(mMediaProtocolMessageStream);
 				(new CastStatusThread()).start();
 
-				PlayerState playerState = mediaProtocolMessageStream.getPlayerState();
+				PlayerState playerState = mMediaProtocolMessageStream
+						.getPlayerState();
 
 				if (PlayerState.PLAYING.equals(playerState)) {
-					btnPlay.setText(getString(R.string.pause) + " " + mediaProtocolMessageStream.getTitle());
+					mBtnPlay.setText(getString(R.string.pause) + " "
+							+ mMediaProtocolMessageStream.getTitle());
 				} else if (PlayerState.STOPPED.equals(playerState)) {
-					btnPlay.setText(getString(R.string.play) + " " + mediaProtocolMessageStream.getTitle());
+					mBtnPlay.setText(getString(R.string.play) + " "
+							+ mMediaProtocolMessageStream.getTitle());
 				} else {
 					Toast.makeText(getBaseContext(), "Select media",
 							Toast.LENGTH_SHORT).show();
@@ -410,18 +408,18 @@ public class MainActivity extends FragmentActivity implements
 			@Override
 			public void onSessionStartFailed(SessionError error) {
 				Log.e(TAG, "onStartFailed " + error);
-				mediaProtocolMessageStream = null;
+				mMediaProtocolMessageStream = null;
 			}
 
 			@Override
 			public void onSessionEnded(SessionError error) {
 				Log.i(TAG, "onEnded " + error);
-				mediaProtocolMessageStream = null;
+				mMediaProtocolMessageStream = null;
 			}
 		});
 
 		try {
-			applicationSession.startSession(appId);
+			mApplicationSession.startSession(mAppId);
 		} catch (IOException e) {
 			Log.e(TAG, "Failed to open session", e);
 		}
@@ -430,13 +428,13 @@ public class MainActivity extends FragmentActivity implements
 	private Medium getMediumAt(int position) {
 		if (position == 0) {
 			return null;
-		} else if (position < dirIdx.size()) {
+		} else if (position < mDirIdx.size()) {
 			int i = 1;
-			Medium m = media.get(dirIdx.get(i));
+			Medium m = mMedia.get(mDirIdx.get(i));
 
 			while (i < position) {
 				i++;
-				m = m.getMediumAt(dirIdx.get(i));
+				m = m.getMediumAt(mDirIdx.get(i));
 			}
 
 			return m;
@@ -448,7 +446,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public List<Medium> getMediaAt(int dirPosition) {
 		if (dirPosition == 0) {
-			return media;
+			return mMedia;
 		} else {
 			Medium m = getMediumAt(dirPosition);
 			if (m != null) {
@@ -462,7 +460,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public Loader<List<Medium>> onCreateLoader(int arg0, Bundle arg1) {
 		if (arg0 == 0) {
-			return new MediaLoader(this, mediaHost);
+			return new MediaLoader(this, mMediaHost);
 		} else {
 			return null;
 		}
@@ -470,14 +468,14 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onLoadFinished(Loader<List<Medium>> arg0, List<Medium> arg1) {
-		media = arg1;
-		dirIdx.clear();
-		dirIdx.add(0);
-		dirPagerAdapter.notifyDataSetChanged();
-		viewPager.setCurrentItem(FRAGMENT_MEDIA_ROOT);
+		mMedia = arg1;
+		mDirIdx.clear();
+		mDirIdx.add(0);
+		mDirPagerAdapter.notifyDataSetChanged();
+		mViewPager.setCurrentItem(FRAGMENT_MEDIA_ROOT);
 		MediaListFragment mediaListFragment = (MediaListFragment) getSupportFragmentManager()
 				.findFragmentByTag(getFragmentTag(FRAGMENT_MEDIA_ROOT));
-		mediaListFragment.onMediaLoaded(media);
+		mediaListFragment.onMediaLoaded(mMedia);
 	}
 
 	@Override
@@ -487,8 +485,8 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onDeviceAvailable(CastDevice device, String arg1,
 			MediaRouteStateChangeListener listener) {
-		castDevice = device;
-		mediaRouteStateChangeListener = listener;
+		mCastDevice = device;
+		mMediaRouteStateChangeListener = listener;
 		openSession();
 	}
 
@@ -498,17 +496,17 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void openDir(int parent, int child) {
-		int currSize = dirIdx.size() - 1;
+		int currSize = mDirIdx.size() - 1;
 
 		while (currSize > parent) {
-			dirIdx.remove(currSize);
+			mDirIdx.remove(currSize);
 			currSize--;
 		}
 
-		dirIdx.add(child);
-		dirPagerAdapter.notifyDataSetChanged();
+		mDirIdx.add(child);
+		mDirPagerAdapter.notifyDataSetChanged();
 		parent++;
-		viewPager.setCurrentItem(parent, true);
+		mViewPager.setCurrentItem(parent, true);
 		MediaListFragment mediaListFragment = (MediaListFragment) getSupportFragmentManager()
 				.findFragmentByTag(getFragmentTag(parent));
 		mediaListFragment.onMediaLoaded(getMediaAt(parent));
@@ -518,10 +516,11 @@ public class MainActivity extends FragmentActivity implements
 	public void openMedium(int parent, int child) {
 		Medium m = getMediaAt(parent).get(child);
 		final ContentMetadata contentMetadata = new ContentMetadata();
-		contentMetadata.setTitle(m.getFile().substring(m.getFile().lastIndexOf(File.separator) + 1));
+		contentMetadata.setTitle(m.getFile().substring(
+				m.getFile().lastIndexOf(File.separator) + 1));
 
-		if (mediaProtocolMessageStream != null) {
-			String urlStr = String.format("http://%s/%s", mediaHost,
+		if (mMediaProtocolMessageStream != null) {
+			String urlStr = String.format("http://%s/%s", mMediaHost,
 					m.getFile());
 
 			try {
@@ -530,18 +529,20 @@ public class MainActivity extends FragmentActivity implements
 						url.getHost(), url.getPort(), url.getPath(),
 						url.getQuery(), url.getRef());
 				url = uri.toURL();
-				MediaProtocolCommand cmd = mediaProtocolMessageStream
+				MediaProtocolCommand cmd = mMediaProtocolMessageStream
 						.loadMedia(url.toString(), contentMetadata, true);
 				cmd.setListener(new MediaProtocolCommand.Listener() {
 					@Override
 					public void onCompleted(MediaProtocolCommand mPCommand) {
-						btnPlay.setText(getString(R.string.pause) + " "	+ contentMetadata.getTitle());
+						mBtnPlay.setText(getString(R.string.pause) + " "
+								+ contentMetadata.getTitle());
 						onSetVolume(0.5);
 					}
 
 					@Override
 					public void onCancelled(MediaProtocolCommand mPCommand) {
-						btnPlay.setText(getString(R.string.play) + " " + contentMetadata.getTitle());
+						mBtnPlay.setText(getString(R.string.play) + " "
+								+ contentMetadata.getTitle());
 					}
 				});
 			} catch (IllegalStateException e) {
@@ -564,37 +565,35 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.btn_play) {
-			if (castDevice != null) {
-				if (mediaProtocolMessageStream != null) {
+			if (mCastDevice != null) {
+				if (mMediaProtocolMessageStream != null) {
 					String text = ((Button) v).getText().toString();
 					if (text.startsWith(getString(R.string.play))) {
-						Toast.makeText(this, getString(R.string.play), Toast.LENGTH_SHORT).show();
+						Toast.makeText(this, getString(R.string.play),
+								Toast.LENGTH_SHORT).show();
 
 						try {
-							if (seekBar.getProgress() > 0) {
-								mediaProtocolMessageStream.resume();
+							if (mSeekBar.getProgress() > 0) {
+								mMediaProtocolMessageStream.resume();
 							} else {
-								mediaProtocolMessageStream.play();
+								mMediaProtocolMessageStream.play();
 							}
-							btnPlay.setText(R.string.pause);
+							mBtnPlay.setText(R.string.pause);
 						} catch (IllegalStateException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					} else {
-						Toast.makeText(this, getString(R.string.pause),	Toast.LENGTH_SHORT).show();
+						Toast.makeText(this, getString(R.string.pause),
+								Toast.LENGTH_SHORT).show();
 
 						try {
-							mediaProtocolMessageStream.stop();
-							btnPlay.setText(R.string.play);
+							mMediaProtocolMessageStream.stop();
+							mBtnPlay.setText(R.string.play);
 						} catch (IllegalStateException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -608,13 +607,14 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public String getTitle(int dirPosition) {
-		return dirPagerAdapter.getPageTitle(dirPosition).toString();
+		return mDirPagerAdapter.getPageTitle(dirPosition).toString();
 	}
 
 	@Override
 	public void onSetVolume(double volume) {
 		try {
-			mediaProtocolMessageStream.setVolume(volume);
+			mMediaProtocolMessageStream.setVolume(volume);
+			mMediaRouteStateChangeListener.onVolumeChanged(volume);
 		} catch (IllegalStateException e) {
 			Log.e(TAG, "Problem sending Set Volume", e);
 		} catch (IOException e) {
@@ -624,7 +624,7 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onUpdateVolume(double volumeChange) {
-		RouteInfo ri = mediaRouter.getSelectedRoute();
+		RouteInfo ri = mMediaRouter.getSelectedRoute();
 
 		if (ri != null) {
 			ri.requestUpdateVolume((int) (volumeChange * MAX_VOLUME_LEVEL));
@@ -640,8 +640,8 @@ public class MainActivity extends FragmentActivity implements
 			if (action == KeyEvent.ACTION_DOWN) {
 				double currentVolume;
 
-				if (mediaProtocolMessageStream != null) {
-					currentVolume = mediaProtocolMessageStream.getVolume();
+				if (mMediaProtocolMessageStream != null) {
+					currentVolume = mMediaProtocolMessageStream.getVolume();
 
 					if (currentVolume < 1.0) {
 						onSetVolume(currentVolume + VOLUME_INCREMENT);
@@ -656,8 +656,8 @@ public class MainActivity extends FragmentActivity implements
 			if (action == KeyEvent.ACTION_DOWN) {
 				double currentVolume;
 
-				if (mediaProtocolMessageStream != null) {
-					currentVolume = mediaProtocolMessageStream.getVolume();
+				if (mMediaProtocolMessageStream != null) {
+					currentVolume = mMediaProtocolMessageStream.getVolume();
 
 					if (currentVolume > 0.0) {
 						onSetVolume(currentVolume - VOLUME_INCREMENT);
@@ -677,7 +677,7 @@ public class MainActivity extends FragmentActivity implements
 		int itemId = item.getItemId();
 
 		if (itemId == R.id.action_refresh) {
-			if (mediaHost != null) {
+			if (mMediaHost != null) {
 				Loader<List<Medium>> loader = getSupportLoaderManager()
 						.initLoader(0, null, this);
 				if (loader != null) {
@@ -687,18 +687,18 @@ public class MainActivity extends FragmentActivity implements
 
 			return true;
 		} else if (itemId == android.R.id.home) {
-			int tabIdx = viewPager.getCurrentItem();
+			int tabIdx = mViewPager.getCurrentItem();
 
 			if (tabIdx > 0) {
-				viewPager.setCurrentItem(--tabIdx);
+				mViewPager.setCurrentItem(--tabIdx);
 			}
 
 			return true;
 		} else if (itemId == R.id.action_settings) {
 			startActivityForResult(
 					new Intent(this, SettingsActivity.class).putExtra(
-							SettingsActivity.EXTRA_APP_ID, appId).putExtra(
-							SettingsActivity.EXTRA_HOST, mediaHost), 0);
+							SettingsActivity.EXTRA_APP_ID, mAppId).putExtra(
+							SettingsActivity.EXTRA_HOST, mMediaHost), 0);
 			return true;
 		}
 
@@ -718,14 +718,13 @@ public class MainActivity extends FragmentActivity implements
 		synchronized (isSeekingLock) {
 			isSeeking = true;
 		}
-		if (mediaProtocolMessageStream != null) {
+
+		if (mMediaProtocolMessageStream != null) {
 			try {
-				mediaProtocolMessageStream.stop();
+				mMediaProtocolMessageStream.stop();
 			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -736,14 +735,12 @@ public class MainActivity extends FragmentActivity implements
 		synchronized (isSeekingLock) {
 			isSeeking = false;
 		}
-		if (mediaProtocolMessageStream != null) {
+		if (mMediaProtocolMessageStream != null) {
 			try {
-				mediaProtocolMessageStream.playFrom(seekBar.getProgress());
+				mMediaProtocolMessageStream.playFrom(seekBar.getProgress());
 			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -753,28 +750,29 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public void run() {
-			while (mediaProtocolMessageStream != null) {
+			while (mMediaProtocolMessageStream != null) {
 				try {
 					synchronized (isSeekingLock) {
 						if (!isSeeking) {
-							final int duration = (int) mediaProtocolMessageStream
+							final int duration = (int) mMediaProtocolMessageStream
 									.getStreamDuration();
-							final int position = (int) mediaProtocolMessageStream
+							final int position = (int) mMediaProtocolMessageStream
 									.getStreamPosition();
 							MainActivity.this.runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									if (seekBar.getMax() < duration) {
-										seekBar.setMax(duration);
+									if (mSeekBar.getMax() < duration) {
+										mSeekBar.setMax(duration);
 									}
 
-									if (seekBar.getProgress() != position) {
-										seekBar.setProgress(position);
+									if (mSeekBar.getProgress() != position) {
+										mSeekBar.setProgress(position);
 									}
 								}
 							});
 						}
 					}
+
 					Thread.sleep(1500);
 				} catch (Exception e) {
 					Log.e(TAG, "Thread interrupted: " + e);
@@ -786,6 +784,6 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public String getHost() {
-		return mediaHost;
+		return mMediaHost;
 	}
 }
