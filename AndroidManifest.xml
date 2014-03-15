@@ -25,8 +25,9 @@
 
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="17" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
@@ -36,7 +37,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.piusvelte.webcaster.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,8 +45,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.piusvelte.webcaster.SettingsActivity" />
+        <activity android:name=".SettingsActivity" />
+
+        <service android:name=".MediaService" android:exported="false" >
+            <intent-filter>
+                <action android:name="com.piusvelte.webcaster.action.PLAY" />
+                <action android:name="com.piusvelte.webcaster.action.PAUSE" />
+                <action android:name="com.piusvelte.webcaster.action.STOP" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".MediaButtonReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
