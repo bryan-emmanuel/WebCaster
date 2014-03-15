@@ -1,0 +1,70 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.9.+'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+apply plugin: 'android'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.1"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 19
+        versionCode 86
+        versionName "8.1.1"
+        renderscriptTargetApi 18
+        renderscriptSupportMode true
+    }
+    buildTypes {
+        debug {
+            versionNameSuffix = '-debug'
+        }
+        release {
+            debuggable false
+            runProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            zipAlign true
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+}
+
+dependencies {
+    // Maven central:
+    compile 'com.android.support:support-v4:19.+'
+    compile 'com.squareup.picasso:picasso:2.0.0'
+
+    compile files('libs/GoogleCastSdkAndroid-1.0.1.jar',
+                  'libs/gson-2.2.4.jar',
+                  'libs/guava-14.0.1.jar',
+                  'libs/json-simple-1.1.1.jar')
+}
